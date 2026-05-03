@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Earfultime CV Template</title>
+    <title>Earfultime CV Template - Revised</title>
     
-    <!-- Fonts - Memastikan semua font dimuat dengan benar -->
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700;900&family=Playpen+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     
     <!-- Libraries -->
@@ -28,7 +30,6 @@
         }
         
         body {
-            /* Menyamakan font dasar ke Josefin Sans untuk semua elemen */
             font-family: 'Josefin Sans', sans-serif !important;
             background-color: var(--earful-bg);
             color: var(--earful-brown);
@@ -36,7 +37,13 @@
             padding: 0;
         }
 
-        .font-playful { font-family: 'Playpen Sans', cursive !important; }
+        /* REVISI: Paksa tegak dan tebal pada class playful */
+        .font-playful { 
+            font-family: 'Playpen Sans', cursive !important; 
+            font-style: normal !important; 
+            font-weight: 800 !important;
+        }
+
         .cv-shadow { box-shadow: 0 40px 80px -20px rgba(83, 55, 30, 0.25); }
         
         .cv-container {
@@ -44,11 +51,10 @@
             height: 297mm;
             background: white;
             flex-shrink: 0;
-            /* Memastikan font tetap sama saat proses render image */
             font-variant-ligatures: none;
         }
 
-        /* Responsive Scaling untuk HP */
+        /* Responsive Scaling */
         @media (max-width: 1023px) {
             .preview-scale {
                 transform: scale(0.35);
@@ -139,7 +145,6 @@
                 
                 window.confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#42a5fd'] });
                 
-                // Memberikan waktu browser memuat font ke engine render
                 await document.fonts.ready;
 
                 try {
@@ -202,37 +207,6 @@
                                     </div>
                                 ))}
                             </ListGroup>
-
-                            <ListGroup title="PENDIDIKAN" count={data.education.length} max={5} onAdd={() => setData({...data, education: [...data.education, {id: Date.now(), y: "", s: ""}]})}>
-                                {data.education.map((edu, i) => (
-                                    <div key={edu.id} className="p-4 bg-earful-bg rounded-2xl border border-earful-lblue relative">
-                                        <input placeholder="Tahun" className="w-full bg-transparent text-[10px] font-black text-earful-tan outline-none mb-1" value={edu.y} onChange={e => {
-                                            const n = [...data.education]; n[i].y = e.target.value; setData({...data, education: n});
-                                        }} />
-                                        <textarea placeholder="Sekolah/Kampus" className="w-full bg-transparent text-sm font-bold text-earful-brown outline-none resize-none h-10" value={edu.s} onChange={e => {
-                                            const n = [...data.education]; n[i].s = e.target.value; setData({...data, education: n});
-                                        }} />
-                                        <button onClick={() => { const n = [...data.education]; n.splice(i, 1); setData({...data, education: n}); }} className="absolute top-2 right-4 text-red-400">×</button>
-                                    </div>
-                                ))}
-                            </ListGroup>
-
-                            <ListGroup title="PENGALAMAN" count={data.experience.length} max={6} onAdd={() => setData({...data, experience: [...data.experience, {id: Date.now(), y: "", c: "", p: ""}]})}>
-                                {data.experience.map((exp, i) => (
-                                    <div key={exp.id} className="p-4 bg-earful-bg rounded-2xl border border-earful-lblue relative space-y-1">
-                                        <input placeholder="Tahun" className="w-full bg-transparent text-[10px] font-black text-earful-tan outline-none" value={exp.y} onChange={e => {
-                                            const n = [...data.experience]; n[i].y = e.target.value; setData({...data, experience: n});
-                                        }} />
-                                        <input placeholder="Perusahaan" className="w-full bg-transparent text-sm font-bold text-earful-blue outline-none" value={exp.c} onChange={e => {
-                                            const n = [...data.experience]; n[i].c = e.target.value; setData({...data, experience: n});
-                                        }} />
-                                        <input placeholder="Jabatan" className="w-full bg-transparent text-xs italic text-earful-brown outline-none" value={exp.p} onChange={e => {
-                                            const n = [...data.experience]; n[i].p = e.target.value; setData({...data, experience: n});
-                                        }} />
-                                        <button onClick={() => { const n = [...data.experience]; n.splice(i, 1); setData({...data, experience: n}); }} className="absolute top-2 right-4 text-red-400">×</button>
-                                    </div>
-                                ))}
-                            </ListGroup>
                         </div>
                     </div>
 
@@ -251,8 +225,16 @@
                                         {data.photo ? <img src={data.photo} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-earful-lblue opacity-30"></div>}
                                     </div>
 
-                                    <h1 className={`text-4xl font-playful font-black text-center uppercase tracking-tighter mb-16 leading-none ${!data.name ? 'text-white/20 italic' : 'text-white'}`}>
-                                        {data.name || "GWEH CAKEP"}
+                                    {/* REVISI: Header Nama dengan Style Inline yang dipaksa tegak */}
+                                    <h1 
+                                        style={{ 
+                                            fontFamily: "'Playpen Sans', cursive", 
+                                            fontWeight: "800",
+                                            fontStyle: "normal" 
+                                        }} 
+                                        className={`text-4xl text-center uppercase tracking-tighter mb-16 leading-tight ${!data.name ? 'opacity-30 italic' : 'opacity-100'}`}
+                                    >
+                                        {data.name || "NAMA DISINI"}
                                     </h1>
 
                                     <div className="w-full space-y-8">
@@ -281,10 +263,6 @@
 
                                 {/* RIGHT SIDE */}
                                 <div className="flex-1 p-16 relative bg-white flex flex-col">
-                                    <div className="absolute top-10 right-8 w-24 opacity-60">
-                                        <img src="https://images.weserv.nl/?url=cdn.phototourl.com/free/2026-04-12-8389dc33-1419-4843-b80b-185eed43e880.png" className="w-full h-auto object-contain" />
-                                    </div>
-
                                     <SectionHeader num="1" title="DATA PRIBADI" />
                                     <div className="pl-16 mb-14 space-y-5">
                                         <DataRow label="NAMA" val={data.name} ph="SI PALING KREATIF" />
