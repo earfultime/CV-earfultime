@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Earfultime CV Template</title>
     
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Playpen+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Fonts - Memastikan semua font dimuat dengan benar -->
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700;900&family=Playpen+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     
     <!-- Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
@@ -29,39 +28,32 @@
         }
         
         body {
-            font-family: 'Josefin Sans', sans-serif;
+            /* Menyamakan font dasar ke Josefin Sans untuk semua elemen */
+            font-family: 'Josefin Sans', sans-serif !important;
             background-color: var(--earful-bg);
             color: var(--earful-brown);
             margin: 0;
             padding: 0;
         }
 
-        .font-playful { font-family: 'Playpen Sans', cursive; }
+        .font-playful { font-family: 'Playpen Sans', cursive !important; }
         .cv-shadow { box-shadow: 0 40px 80px -20px rgba(83, 55, 30, 0.25); }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--earful-lblue); border-radius: 10px; }
-        
-        /* Responsive Scaling for Preview */
-        .preview-wrapper {
-            display: flex;
-            justify-content: center;
-            padding: 2rem;
-            min-width: fit-content;
-        }
         
         .cv-container {
             width: 210mm;
             height: 297mm;
             background: white;
             flex-shrink: 0;
+            /* Memastikan font tetap sama saat proses render image */
+            font-variant-ligatures: none;
         }
 
-        /* Penyesuaian Skala agar di HP terlihat sama proporsinya dengan PC */
+        /* Responsive Scaling untuk HP */
         @media (max-width: 1023px) {
             .preview-scale {
-                transform: scale(0.35); /* Disesuaikan untuk layar HP */
+                transform: scale(0.35);
                 transform-origin: top center;
-                margin-bottom: -190mm; /* Kompensasi ruang kosong akibat scale */
+                margin-bottom: -190mm;
             }
         }
         
@@ -73,12 +65,9 @@
         }
 
         @media (min-width: 1440px) {
-            .preview-scale {
-                transform: scale(0.9);
-            }
+            .preview-scale { transform: scale(0.9); }
         }
 
-        /* Section text fixes */
         .section-box { min-width: max-content; }
     </style>
     
@@ -100,7 +89,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useRef, useEffect } = React;
+        const { useState, useRef } = React;
 
         const Icon = ({ name, className }) => {
             const icons = {
@@ -147,26 +136,33 @@
             const downloadHD = async () => {
                 const node = document.getElementById('cv-output');
                 if (!node) return;
+                
                 window.confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#42a5fd'] });
                 
+                // Memberikan waktu browser memuat font ke engine render
+                await document.fonts.ready;
+
                 try {
                     const dataUrl = await htmlToImage.toJpeg(node, {
-                        quality: 0.95, pixelRatio: 3, backgroundColor: '#ffffff'
+                        quality: 0.95,
+                        pixelRatio: 3,
+                        backgroundColor: '#ffffff',
+                        cacheBust: true,
                     });
                     const link = document.createElement('a');
                     link.download = `CV_EARFUL_${data.name.replace(/\s+/g, '_') || 'USER'}.jpg`;
                     link.href = dataUrl;
                     link.click();
                 } catch (e) {
-                    console.error("Download failed", e);
+                    console.error("Gagal mendownload", e);
                 }
             };
 
             return (
                 <div className="flex flex-col lg:flex-row h-screen overflow-hidden bg-earful-bg">
                     
-                    {/* EDITOR SECTION */}
-                    <div className="w-full lg:w-[450px] bg-white border-r border-earful-lblue p-6 overflow-y-auto custom-scrollbar z-30 shadow-2xl">
+                    {/* EDITOR */}
+                    <div className="w-full lg:w-[450px] bg-white border-r border-earful-lblue p-6 overflow-y-auto z-30 shadow-2xl">
                         <header className="mb-10">
                             <h1 className="font-playful text-4xl font-black text-earful-blue tracking-tighter">AYO BUAT CV!!</h1>
                             <div className="h-1 w-20 bg-earful-blue rounded-full mt-2"></div>
@@ -199,7 +195,7 @@
                             <ListGroup title="KEAHLIAN" count={data.skills.length} max={10} onAdd={() => setData({...data, skills: [...data.skills, ""]})}>
                                 {data.skills.map((s, i) => (
                                     <div key={i} className="flex gap-2">
-                                        <input className="flex-1 p-3 bg-earful-bg rounded-xl border border-earful-lblue text-sm outline-none" value={s} onChange={e => {
+                                        <input className="flex-1 p-3 bg-earful-bg rounded-xl border border-earful-lblue text-sm outline-none font-bold" value={s} onChange={e => {
                                             const n = [...data.skills]; n[i] = e.target.value; setData({...data, skills: n});
                                         }} placeholder="Skill lu apa?" />
                                         <button onClick={() => { const n = [...data.skills]; n.splice(i, 1); setData({...data, skills: n}); }} className="text-red-400 font-bold">×</button>
@@ -240,8 +236,8 @@
                         </div>
                     </div>
 
-                    {/* PREVIEW SECTION */}
-                    <div className="flex-1 overflow-y-auto overflow-x-hidden p-8 flex flex-col items-center">
+                    {/* PREVIEW */}
+                    <div className="flex-1 overflow-y-auto p-8 flex flex-col items-center">
                         <button onClick={downloadHD} className="sticky top-0 z-50 mb-10 px-12 py-5 bg-earful-blue text-white font-playful font-black text-xl rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all">
                             DOWNLOAD JPG
                         </button>
@@ -268,7 +264,7 @@
 
                                     <div className="w-full mt-16">
                                         <div className="bg-white text-earful-blue py-2 rounded-2xl text-center font-playful font-black tracking-widest text-lg uppercase shadow-inner mb-8">KEAHLIAN</div>
-                                        <div className="space-y-4 px-4 overflow-visible">
+                                        <div className="space-y-4 px-4">
                                             {data.skills.length > 0 ? data.skills.map((s, i) => (
                                                 <div key={i} className="flex gap-4 items-start font-bold">
                                                     <div className="w-2.5 h-2.5 rounded-full bg-white mt-1 shrink-0"></div>
@@ -336,9 +332,9 @@
             <div className="space-y-1">
                 <label className="text-[10px] font-black text-earful-tan uppercase tracking-widest ml-1">{label}</label>
                 {multiline ? (
-                    <textarea value={value} className="w-full p-3 bg-earful-bg border border-earful-lblue rounded-2xl text-sm outline-none resize-none h-24" onChange={e => onChange(e.target.value)} placeholder={ph} />
+                    <textarea value={value} className="w-full p-3 bg-earful-bg border border-earful-lblue rounded-2xl text-sm outline-none font-bold h-24" onChange={e => onChange(e.target.value)} placeholder={ph} />
                 ) : (
-                    <input value={value} className="w-full p-3 bg-earful-bg border border-earful-lblue rounded-2xl text-sm outline-none" onChange={e => onChange(e.target.value)} placeholder={ph} />
+                    <input value={value} className="w-full p-3 bg-earful-bg border border-earful-lblue rounded-2xl text-sm outline-none font-bold" onChange={e => onChange(e.target.value)} placeholder={ph} />
                 )}
             </div>
         );
@@ -363,7 +359,7 @@
         );
 
         const SectionHeader = ({ num, title }) => (
-            <div className="flex items-center gap-5 mb-10 overflow-visible">
+            <div className="flex items-center gap-5 mb-10">
                 <div className="w-11 h-11 rounded-full bg-earful-blue text-white flex items-center justify-center font-playful font-black text-xl shadow-lg transform -rotate-12 shrink-0">{num}</div>
                 <div className="section-box px-8 py-3 bg-earful-blue rounded-r-full rounded-tl-full text-white font-playful font-black text-2xl shadow-xl tracking-tighter uppercase">{title}</div>
             </div>
