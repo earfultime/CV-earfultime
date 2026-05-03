@@ -28,7 +28,6 @@
             --earful-tan: #cfb59e;
         }
         
-        /* Memastikan font dimuat secara eksplisit untuk html-to-image */
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Playpen+Sans:wght@300;400;600;800&display=swap');
 
         body {
@@ -57,7 +56,6 @@
             height: 297mm;
             background: white;
             flex-shrink: 0;
-            /* Paksa font di dalam container */
             font-family: 'Josefin Sans', sans-serif;
         }
 
@@ -84,7 +82,6 @@
 
         .section-box { min-width: max-content; }
         
-        /* Pencegahan glitch font saat proses convert */
         #cv-output * {
             font-variant-ligatures: none;
         }
@@ -156,22 +153,19 @@
                 const node = document.getElementById('cv-output');
                 if (!node) return;
                 
-                // Animasi confetti
                 window.confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#42a5fd'] });
                 
-                // Menunggu sejenak agar font benar-benar ter-load di browser mobile
                 await document.fonts.ready;
 
                 try {
-                    const dataUrl = await htmlToImage.toJpeg(node, {
-                        quality: 0.95,
-                        pixelRatio: 3, // High Resolution
-                        backgroundColor: '#ffffff',
-                        cacheBust: true, // Menghindari masalah cache pada font
+                    // Berubah dari toJpeg menjadi toPng
+                    const dataUrl = await htmlToImage.toPng(node, {
+                        pixelRatio: 3, 
+                        cacheBust: true,
                     });
                     
                     const link = document.createElement('a');
-                    link.download = `CV_EARFUL_${data.name.replace(/\s+/g, '_') || 'USER'}.jpg`;
+                    link.download = `CV_EARFUL_${data.name.replace(/\s+/g, '_') || 'USER'}.png`;
                     link.href = dataUrl;
                     link.click();
                 } catch (e) {
@@ -260,7 +254,7 @@
                     {/* PREVIEW SECTION */}
                     <div className="flex-1 overflow-y-auto overflow-x-hidden p-8 flex flex-col items-center">
                         <button onClick={downloadHD} className="sticky top-0 z-50 mb-10 px-12 py-5 bg-earful-blue text-white font-playful font-black text-xl rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all">
-                            DOWNLOAD JPG
+                            DOWNLOAD PNG
                         </button>
 
                         <div className="preview-scale">
