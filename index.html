@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Earfultime CV Templatet</title>
+    <title>Earfultime CV Template</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -24,8 +24,7 @@
         }
         
         body {
-            /* Pakai font sans-serif */
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-family: Arial, Helvetica, sans-serif !important;
             background-color: var(--earful-bg);
             color: var(--earful-brown);
             margin: 0;
@@ -33,8 +32,8 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /*  */
-        .font-playful { font-family: sans-serif !important; font-weight: 900; }
+        * { font-family: Arial, Helvetica, sans-serif !important; }
+        .font-playful { font-weight: 900; }
         
         .cv-shadow { box-shadow: 0 40px 80px -20px rgba(83, 55, 30, 0.25); }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
@@ -45,8 +44,6 @@
             height: 297mm;
             background: white;
             flex-shrink: 0;
-            /*  */
-            font-family: Arial, sans-serif !important;
         }
 
         @media (max-width: 1023px) {
@@ -65,11 +62,6 @@
         }
 
         .section-box { min-width: max-content; }
-        
-        /*  */
-        #cv-output span, #cv-output div, #cv-output h1 {
-            font-family: Arial, sans-serif !important;
-        }
     </style>
     
     <script>
@@ -90,7 +82,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useRef, useEffect } = React;
+        const { useState, useRef } = React;
 
         const Icon = ({ name, className }) => {
             const icons = {
@@ -109,7 +101,8 @@
         const App = () => {
             const [data, setData] = useState({
                 name: "", photo: null, phone: "", email: "", social: "", address: "",
-                birthInfo: "", gender: "", status: "", skills: [], education: [], experience: []
+                birthInfo: "", gender: "", status: "", skills: [], 
+                education: [], experience: []
             });
 
             const fileInputRef = useRef(null);
@@ -137,41 +130,26 @@
             const downloadHD = async () => {
                 const node = document.getElementById('cv-output');
                 if (!node) return;
-                
                 window.confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#42a5fd'] });
-                
                 try {
-                    const dataUrl = await htmlToImage.toPng(node, {
-                        pixelRatio: 2.5, // Sedikit dikurangi agar HP tidak berat saat render
-                        cacheBust: true,
-                        style: {
-                            fontFamily: 'Arial' // Paksa font saat render
-                        }
-                    });
-                    
+                    const dataUrl = await htmlToImage.toPng(node, { pixelRatio: 2.5, cacheBust: true });
                     const link = document.createElement('a');
-                    link.download = `CV_EARFUL_${data.name.replace(/\s+/g, '_') || 'USER'}.png`;
+                    link.download = `CV_EARFULTIME_${data.name || 'USER'}.png`;
                     link.href = dataUrl;
                     link.click();
-                } catch (e) {
-                    console.error("Download failed", e);
-                }
+                } catch (e) { console.error(e); }
             };
 
             return (
                 <div className="flex flex-col lg:flex-row h-screen overflow-hidden bg-earful-bg">
-                    
-                    {/* EDITOR SECTION */}
+                    {/* EDITOR */}
                     <div className="w-full lg:w-[450px] bg-white border-r border-earful-lblue p-6 overflow-y-auto custom-scrollbar z-30 shadow-2xl">
-                        <header className="mb-10">
-                            <h1 className="text-3xl font-black text-earful-blue tracking-tighter uppercase">AYO BUAT CV!!</h1>
-                            <div className="h-1 w-20 bg-earful-blue rounded-full mt-2"></div>
-                        </header>
-
-                        <div className="space-y-8 pb-32">
+                        <h1 className="text-3xl font-black text-earful-blue mb-10 uppercase tracking-tighter">BUAT CV EARFULTIME</h1>
+                        
+                        <div className="space-y-6 pb-32">
                             <section>
-                                <label className="text-[10px] font-black tracking-widest text-earful-tan uppercase">Foto Profil</label>
-                                <div onClick={() => fileInputRef.current?.click()} className="mt-2 w-28 h-28 rounded-[2rem] bg-earful-bg border-4 border-dashed border-earful-lblue flex items-center justify-center cursor-pointer overflow-hidden transform hover:scale-105 transition-all">
+                                <label className="text-[10px] font-black text-earful-tan uppercase">Foto Profil</label>
+                                <div onClick={() => fileInputRef.current?.click()} className="mt-2 w-28 h-28 rounded-[2rem] bg-earful-bg border-4 border-dashed border-earful-lblue flex items-center justify-center cursor-pointer overflow-hidden">
                                     {data.photo ? <img src={data.photo} className="w-full h-full object-cover" /> : <Icon name="camera" className="text-earful-lblue w-10 h-10" />}
                                 </div>
                                 <input type="file" ref={fileInputRef} className="hidden" onChange={handleImage} accept="image/*" />
@@ -179,12 +157,10 @@
 
                             <Input label="Nama Lengkap" value={data.name} ph="GWEH CAKEP" onChange={v => setData({...data, name: v})} />
                             <Input label="Tempat, Tgl Lahir" value={data.birthInfo} ph="MARS, 1 JAN 2077" onChange={v => setData({...data, birthInfo: v})} />
-                            <div className="grid grid-cols-2 gap-4">
-                                <Input label="Gender" value={data.gender} ph="SETENGAH MATANG" onChange={v => setData({...data, gender: v})} />
-                                <Input label="Status" value={data.status} ph="LAGI STRESS" onChange={v => setData({...data, status: v})} />
-                            </div>
+                            <Input label="Gender" value={data.gender} ph="SETENGAH MATANG" onChange={v => setData({...data, gender: v})} />
+                            <Input label="Status" value={data.status} ph="LAGI STRESS" onChange={v => setData({...data, status: v})} />
                             <Input label="Alamat" value={data.address} multiline ph="JL. BUNTU NO. 404" onChange={v => setData({...data, address: v})} />
-
+                            
                             <div className="pt-6 border-t border-dashed border-earful-lblue space-y-4">
                                 <h3 className="font-bold text-earful-blue uppercase">KONTAK</h3>
                                 <Input label="No Telepon" value={data.phone} ph="08XX-XXX-XXX-XX" onChange={v => setData({...data, phone: v})} />
@@ -192,98 +168,113 @@
                                 <Input label="Instagram" value={data.social} ph="@EARFULTIME" onChange={v => setData({...data, social: v})} />
                             </div>
 
-                            <ListGroup title="KEAHLIAN" count={data.skills.length} max={10} onAdd={() => setData({...data, skills: [...data.skills, ""]})}>
+                            <ListGroup title="KEAHLIAN" count={data.skills.length} onAdd={() => setData({...data, skills: [...data.skills, ""]})}>
                                 {data.skills.map((s, i) => (
                                     <div key={i} className="flex gap-2">
-                                        <input className="flex-1 p-3 bg-earful-bg rounded-xl border border-earful-lblue text-sm outline-none" value={s} onChange={e => {
+                                        <input className="flex-1 p-3 bg-earful-bg rounded-xl border text-sm" value={s} onChange={e => {
                                             const n = [...data.skills]; n[i] = e.target.value; setData({...data, skills: n});
-                                        }} placeholder="Skill lu apa?" />
+                                        }} placeholder="Skill?" />
                                         <button onClick={() => { const n = [...data.skills]; n.splice(i, 1); setData({...data, skills: n}); }} className="text-red-400 font-bold">×</button>
+                                    </div>
+                                ))}
+                            </ListGroup>
+
+                            <ListGroup title="PENDIDIKAN" onAdd={() => setData({...data, education: [...data.education, {id: Date.now(), y: "2020-2024", s: "NAMA SEKOLAH"}]})}>
+                                {data.education.map((edu, i) => (
+                                    <div key={edu.id} className="p-3 bg-earful-bg rounded-xl border space-y-2">
+                                        <input className="w-full text-xs font-bold" value={edu.y} onChange={e => {
+                                            const n = [...data.education]; n[i].y = e.target.value; setData({...data, education: n});
+                                        }} />
+                                        <input className="w-full text-sm" value={edu.s} onChange={e => {
+                                            const n = [...data.education]; n[i].s = e.target.value; setData({...data, education: n});
+                                        }} />
+                                        <button onClick={() => { const n = [...data.education]; n.splice(i, 1); setData({...data, education: n}); }} className="text-xs text-red-500 underline">Hapus</button>
+                                    </div>
+                                ))}
+                            </ListGroup>
+
+                            <ListGroup title="PENGALAMAN" onAdd={() => setData({...data, experience: [...data.experience, {id: Date.now(), y: "2024", c: "PT APA", p: "POSISI"}]})}>
+                                {data.experience.map((exp, i) => (
+                                    <div key={exp.id} className="p-3 bg-earful-bg rounded-xl border space-y-2">
+                                        <input className="w-full text-xs font-bold" value={exp.y} onChange={e => {
+                                            const n = [...data.experience]; n[i].y = e.target.value; setData({...data, experience: n});
+                                        }} />
+                                        <input className="w-full text-sm font-black" value={exp.c} onChange={e => {
+                                            const n = [...data.experience]; n[i].c = e.target.value; setData({...data, experience: n});
+                                        }} />
+                                        <input className="w-full text-xs italic" value={exp.p} onChange={e => {
+                                            const n = [...data.experience]; n[i].p = e.target.value; setData({...data, experience: n});
+                                        }} />
+                                        <button onClick={() => { const n = [...data.experience]; n.splice(i, 1); setData({...data, experience: n}); }} className="text-xs text-red-500 underline">Hapus</button>
                                     </div>
                                 ))}
                             </ListGroup>
                         </div>
                     </div>
 
-                    {/* PREVIEW SECTION */}
-                    <div className="flex-1 overflow-y-auto overflow-x-hidden p-8 flex flex-col items-center">
-                        <button onClick={downloadHD} className="sticky top-0 z-50 mb-10 px-12 py-5 bg-earful-blue text-white font-black text-xl rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all uppercase">
-                            DOWNLOAD PNG
-                        </button>
-
+                    {/* PREVIEW */}
+                    <div className="flex-1 overflow-y-auto p-8 flex flex-col items-center">
+                        <button onClick={downloadHD} className="sticky top-0 z-50 mb-10 px-12 py-5 bg-earful-blue text-white font-black rounded-full shadow-2xl uppercase">DOWNLOAD PNG</button>
+                        
                         <div className="preview-scale">
-                            <div id="cv-output" className="cv-container rounded-[3.5rem] overflow-hidden flex flex-row cv-shadow relative">
-                                
-                                {/* LEFT BAR */}
+                            <div id="cv-output" className="cv-container rounded-[3.5rem] overflow-hidden flex flex-row cv-shadow bg-white">
                                 <div className="w-[38%] bg-earful-blue p-12 flex flex-col items-center text-white">
-                                    <div className="w-48 h-48 rounded-[3.2rem] border-4 border-white shadow-2xl overflow-hidden mb-12 transform -rotate-3">
-                                        {data.photo ? <img src={data.photo} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-earful-lblue opacity-30"></div>}
+                                    <div className="w-48 h-48 rounded-[3.2rem] border-4 border-white overflow-hidden mb-12 transform -rotate-3">
+                                        {data.photo && <img src={data.photo} className="w-full h-full object-cover" />}
                                     </div>
-
-                                    <h1 className={`text-4xl font-black text-center uppercase tracking-tighter mb-16 leading-none ${!data.name ? 'text-white/20 italic' : 'text-white'}`}>
-                                        {data.name || "GWEH CAKEP"}
-                                    </h1>
-
+                                    <h1 className="text-3xl font-black text-center uppercase tracking-tighter mb-16">{data.name || "GWEH CAKEP"}</h1>
+                                    
                                     <div className="w-full space-y-8">
-                                        <div className="bg-white text-earful-blue py-2 rounded-2xl text-center font-black tracking-widest text-lg uppercase shadow-inner">KONTAK</div>
+                                        <div className="bg-white text-earful-blue py-2 rounded-2xl text-center font-black uppercase shadow-inner">KONTAK</div>
                                         <PreviewIcon name="phone" text={data.phone} ph="08XX-XXX-XXX-XX" />
                                         <PreviewIcon name="mail" text={data.email} ph="HALO@EARFULTIME.COM" />
                                         <PreviewIcon name="instagram" text={data.social} ph="@EARFULTIME" />
                                     </div>
 
                                     <div className="w-full mt-16">
-                                        <div className="bg-white text-earful-blue py-2 rounded-2xl text-center font-black tracking-widest text-lg uppercase shadow-inner mb-8">KEAHLIAN</div>
-                                        <div className="space-y-4 px-4 overflow-visible">
-                                            {data.skills.length > 0 ? data.skills.map((s, i) => (
-                                                <div key={i} className="flex gap-4 items-start font-bold">
-                                                    <div className="w-2.5 h-2.5 rounded-full bg-white mt-1 shrink-0"></div>
-                                                    <span className="text-base truncate uppercase">{s}</span>
+                                        <div className="bg-white text-earful-blue py-2 rounded-2xl text-center font-black uppercase mb-8 shadow-inner">KEAHLIAN</div>
+                                        <div className="space-y-4 px-4">
+                                            {data.skills.map((s, i) => (
+                                                <div key={i} className="flex gap-4 items-center font-bold">
+                                                    <div className="w-2.5 h-2.5 rounded-full bg-white shrink-0" />
+                                                    <span className="uppercase text-sm">{s}</span>
                                                 </div>
-                                            )) : <div className="text-white/20 italic">BISA TIDUR 10 JAM...</div>}
+                                            ))}
                                         </div>
-                                    </div>
-                                    
-                                    <div className="mt-auto opacity-10 self-start transform -rotate-6">
-                                        <span className="font-black text-7xl uppercase">Earfultime!</span>
                                     </div>
                                 </div>
 
-                                {/* RIGHT SIDE */}
-                                <div className="flex-1 p-16 relative bg-white flex flex-col">
-                                    <div className="absolute top-10 right-8 w-24 opacity-60">
-                                        <img src="https://images.weserv.nl/?url=cdn.phototourl.com/free/2026-04-12-8389dc33-1419-4843-b80b-185eed43e880.png" className="w-full h-auto object-contain" />
-                                    </div>
-
+                                <div className="flex-1 p-16 relative flex flex-col">
                                     <SectionHeader num="1" title="DATA PRIBADI" />
-                                    <div className="pl-16 mb-14 space-y-5">
+                                    <div className="pl-16 mb-12 space-y-4">
                                         <DataRow label="NAMA" val={data.name} ph="SI PALING KREATIF" />
                                         <DataRow label="TEMPAT, TGL LAHIR" val={data.birthInfo} ph="MARS, 1 JAN 2077" />
                                         <DataRow label="JENIS KELAMIN" val={data.gender} ph="SETENGAH MATANG" />
-                                        <DataRow label="STATUS" val={data.status} ph="LAGI STRESS BANGET" />
+                                        <DataRow label="STATUS" val={data.status} ph="LAGI STRESS" />
                                         <DataRow label="ALAMAT" val={data.address} ph="JL. BUNTU NO. 404" />
                                     </div>
 
                                     <SectionHeader num="2" title="RIWAYAT PENDIDIKAN" />
-                                    <div className="pl-16 mb-14 space-y-8">
-                                        {data.education.length > 0 ? data.education.map(edu => (
+                                    <div className="pl-16 mb-12 space-y-6">
+                                        {data.education.map(edu => (
                                             <div key={edu.id} className="relative">
                                                 <div className="absolute -left-8 top-1.5 w-2.5 h-2.5 rounded-full bg-earful-lblue" />
-                                                <div className="text-[10px] font-black text-earful-tan uppercase tracking-widest">{edu.y}</div>
-                                                <div className="text-xl font-bold text-earful-brown tracking-tight leading-tight uppercase">{edu.s}</div>
+                                                <div className="text-[10px] font-black text-earful-tan uppercase">{edu.y}</div>
+                                                <div className="text-lg font-bold text-earful-brown uppercase leading-tight">{edu.s}</div>
                                             </div>
-                                        )) : <div className="text-earful-tan/20 italic font-medium">TK Belajar Pingsan (2000 - 2005)</div>}
+                                        ))}
                                     </div>
 
                                     <SectionHeader num="3" title="PENGALAMAN KERJA" />
-                                    <div className="pl-16 space-y-8">
-                                        {data.experience.length > 0 ? data.experience.map(exp => (
+                                    <div className="pl-16 space-y-6">
+                                        {data.experience.map(exp => (
                                             <div key={exp.id} className="relative">
                                                 <div className="absolute -left-8 top-1.5 w-2.5 h-2.5 rounded-full bg-earful-tan" />
-                                                <div className="text-[10px] font-black text-earful-tan uppercase tracking-widest">{exp.y}</div>
-                                                <div className="text-xl font-black text-earful-blue tracking-tighter leading-none mb-1 uppercase">{exp.c}</div>
-                                                <div className="text-sm italic font-bold text-earful-brown opacity-70">({exp.p})</div>
+                                                <div className="text-[10px] font-black text-earful-tan uppercase">{exp.y}</div>
+                                                <div className="text-lg font-black text-earful-blue uppercase leading-tight">{exp.c}</div>
+                                                <div className="text-xs italic font-bold text-earful-brown">({exp.p})</div>
                                             </div>
-                                        )) : <div className="text-earful-tan/20 italic font-medium">PT Hilang Kabar - CEO (2020)</div>}
+                                        ))}
                                     </div>
                                 </div>
                             </div>
@@ -295,20 +286,20 @@
 
         const Input = ({ label, value, onChange, ph, multiline }) => (
             <div className="space-y-1">
-                <label className="text-[10px] font-black text-earful-tan uppercase tracking-widest ml-1">{label}</label>
+                <label className="text-[10px] font-black text-earful-tan uppercase tracking-widest">{label}</label>
                 {multiline ? (
-                    <textarea value={value} className="w-full p-3 bg-earful-bg border border-earful-lblue rounded-2xl text-sm outline-none resize-none h-24" onChange={e => onChange(e.target.value)} placeholder={ph} />
+                    <textarea value={value} className="w-full p-3 bg-earful-bg border border-earful-lblue rounded-2xl text-sm outline-none resize-none h-20" onChange={e => onChange(e.target.value)} placeholder={ph} />
                 ) : (
                     <input value={value} className="w-full p-3 bg-earful-bg border border-earful-lblue rounded-2xl text-sm outline-none" onChange={e => onChange(e.target.value)} placeholder={ph} />
                 )}
             </div>
         );
 
-        const ListGroup = ({ title, count, max, onAdd, children }) => (
+        const ListGroup = ({ title, count, onAdd, children }) => (
             <div className="pt-6 border-t border-dashed border-earful-lblue space-y-4">
                 <div className="flex justify-between items-center">
-                    <h3 className="font-bold text-earful-blue italic uppercase">{title} ({count}/{max})</h3>
-                    <button disabled={count >= max} onClick={onAdd} className="w-8 h-8 rounded-full bg-earful-blue text-white font-bold flex items-center justify-center disabled:bg-gray-200">+</button>
+                    <h3 className="font-bold text-earful-blue uppercase text-sm">{title}</h3>
+                    <button onClick={onAdd} className="w-7 h-7 rounded-full bg-earful-blue text-white font-bold">+</button>
                 </div>
                 {children}
             </div>
@@ -316,24 +307,24 @@
 
         const PreviewIcon = ({ name, text, ph }) => (
             <div className="flex items-center gap-5">
-                <div className="w-11 h-11 rounded-[1.2rem] bg-white/10 flex items-center justify-center border border-white/5 shrink-0">
-                    <Icon name={name} className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center border border-white/5 shrink-0">
+                    <Icon name={name} className="w-4 h-4 text-white" />
                 </div>
-                <span className={`text-base font-bold truncate max-w-[200px] ${!text ? 'text-white/20 italic font-medium' : 'text-white'}`}>{text || ph}</span>
+                <span className={`text-sm font-bold truncate ${!text ? 'text-white/20 italic' : 'text-white'}`}>{text || ph}</span>
             </div>
         );
 
         const SectionHeader = ({ num, title }) => (
-            <div className="flex items-center gap-5 mb-10 overflow-visible">
-                <div className="w-11 h-11 rounded-full bg-earful-blue text-white flex items-center justify-center font-black text-xl shadow-lg transform -rotate-12 shrink-0">{num}</div>
-                <div className="section-box px-8 py-3 bg-earful-blue rounded-r-full rounded-tl-full text-white font-black text-2xl shadow-xl tracking-tighter uppercase">{title}</div>
+            <div className="flex items-center gap-5 mb-8">
+                <div className="w-10 h-10 rounded-full bg-earful-blue text-white flex items-center justify-center font-black text-lg transform -rotate-12">{num}</div>
+                <div className="section-box px-8 py-2 bg-earful-blue rounded-r-full rounded-tl-full text-white font-black text-lg uppercase tracking-tight">{title}</div>
             </div>
         );
 
         const DataRow = ({ label, val, ph }) => (
             <div className="flex flex-col">
-                <span className="text-[10px] font-black text-earful-tan uppercase tracking-widest mb-0.5">{label} :</span>
-                <span className={`text-2xl font-bold leading-tight uppercase ${!val ? 'text-earful-tan/15 italic font-medium text-xl' : 'text-earful-brown'}`}>{val || ph}</span>
+                <span className="text-[10px] font-black text-earful-tan uppercase">{label} :</span>
+                <span className={`text-xl font-bold uppercase leading-tight ${!val ? 'text-earful-tan/20 italic' : 'text-earful-brown'}`}>{val || ph}</span>
             </div>
         );
 
